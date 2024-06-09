@@ -46,7 +46,7 @@ const DecodedUploadBtn = ({
           type="file"
           className="sr-only"
           onChange={onFileDecoding}
-          accept=".txt"
+          accept=".bin"
         />
       </div>
     </>

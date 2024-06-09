@@ -4,30 +4,17 @@ export const buildHuffmanTree = (text) => {
     if (!freqMap[char]) freqMap[char] = 1;
     else freqMap[char]++;
   }
-  console.log(freqMap);
 
   const nodes = [];
-
-  for (const node in freqMap) {
-    nodes.push({
-      char: node,
-      freq: freqMap[node],
-      left: null,
-      right: null,
-    });
+  for (const char in freqMap) {
+    nodes.push({ char, freq: freqMap[char], left: null, right: null });
   }
+
   while (nodes.length > 1) {
     nodes.sort((a, b) => a.freq - b.freq);
-    console.log(nodes);
     const left = nodes.shift();
     const right = nodes.shift();
-    const newNode = {
-      char: null,
-      freq: left.freq + right.freq,
-      left: left,
-      right: right,
-    };
-    nodes.push(newNode);
+    nodes.push({ char: null, freq: left.freq + right.freq, left, right });
   }
 
   return nodes[0];
@@ -35,7 +22,6 @@ export const buildHuffmanTree = (text) => {
 
 export const generateHuffmanCodes = (root) => {
   const codes = {};
-
   const traverse = (node, code) => {
     if (node.char !== null) {
       codes[node.char] = code;
@@ -44,7 +30,6 @@ export const generateHuffmanCodes = (root) => {
     if (node.left) traverse(node.left, code + "0");
     if (node.right) traverse(node.right, code + "1");
   };
-
   traverse(root, "");
   return codes;
 };
@@ -59,20 +44,50 @@ export const compressText = (text, codes) => {
 export const decompressText = (encodedText, root) => {
   let decodedText = "";
   let currentNode = root;
-  console.log(root);
-
   for (const bit of encodedText) {
-    if (bit === "0") {
-      currentNode = currentNode.left;
-    } else {
-      currentNode = currentNode.right;
-    }
-
+    currentNode = bit === "0" ? currentNode.left : currentNode.right;
     if (currentNode.char !== null) {
       decodedText += currentNode.char;
       currentNode = root;
     }
   }
-
   return decodedText;
+};
+
+export const bitStringToByteArray = (bitString) => {
+  const byteArray = [];
+  for (let i = 0; i < bitString.length; i += 8) {
+    const byte = bitString.substring(i, i + 8);
+    byteArray.push(parseInt(byte, 2));
+  }
+  return new Uint8Array(byteArray);
+};
+
+export const byteArrayToBitString = (byteArray) => {
+  let bitString = "";
+  for (let byte of byteArray) {
+    bitString += byte.toString(2).padStart(8, "0");
+  }
+  return bitString;
+};
+
+export const downloadByteArray = (byteArray, fileName) => {
+  const blob = new Blob([byteArray], { type: "application/octet-stream" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+export const readByteFile = (file, callback) => {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const byteArray = new Uint8Array(e.target.result);
+    callback(byteArray);
+  };
+  reader.readAsArrayBuffer(file);
 };

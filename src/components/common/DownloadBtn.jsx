@@ -1,11 +1,27 @@
 const DownloadBtn = ({ className, text }) => {
+  const bitStringToByteArray = (bitString) => {
+    const byteArray = [];
+    for (let i = 0; i < bitString.length; i += 8) {
+      const byte = bitString.substring(i, i + 8);
+      byteArray.push(parseInt(byte, 2));
+    }
+    return new Uint8Array(byteArray);
+  };
+
   const onExport = () => {
     if (text === "") return;
 
+    const bitString = text
+      .split("")
+      .map((char) => char.charCodeAt(0).toString(2).padStart(8, "0"))
+      .join("");
+
+    const byteArray = bitStringToByteArray(bitString);
+
     const element = document.createElement("a");
-    const file = new Blob([text], { type: "text/plain" });
+    const file = new Blob([byteArray], { type: "application/octet-stream" });
     element.href = URL.createObjectURL(file);
-    element.download = "인코딩 결과.txt";
+    element.download = "text.bin";
     document.body.appendChild(element); // FireFox fix
     element.click();
     document.body.removeChild(element);
