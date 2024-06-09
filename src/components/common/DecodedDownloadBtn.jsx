@@ -1,12 +1,12 @@
-const DownloadBtn = ({ className, text }) => {
+const DecodedDownloadBtn = ({ className, text }) => {
   const onExport = () => {
     if (text === "") return;
 
     const element = document.createElement("a");
     const file = new Blob([text], { type: "text/plain" });
     element.href = URL.createObjectURL(file);
-    element.download = "인코딩 결과.txt";
-    document.body.appendChild(element); // FireFox fix
+    element.download = "디코딩 결과.txt";
+    document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
   };
@@ -14,7 +14,7 @@ const DownloadBtn = ({ className, text }) => {
   return (
     <>
       <button
-        id="download-decompressed"
+        id="download-compressed"
         className={`flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
           text ? "bg-indigo-600 hover:bg-indigo-700" : "bg-gray-400"
         } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
@@ -43,4 +43,4 @@ const DownloadBtn = ({ className, text }) => {
   );
 };
 
-export default DownloadBtn;
+export default DecodedDownloadBtn;

@@ -1,35 +1,26 @@
-import {
-  buildHuffmanTree,
-  generateHuffmanCodes,
-  compressText,
-} from "../../functions/huffman";
+import { decompressText } from "../../functions/huffman";
 
-const UploadBtn = ({ className, setText, setCompressedText, setTree }) => {
-  const onFileEncoding = (e) => {
+const DecodedUploadBtn = ({
+  className,
+  setHuffman,
+  setDecompressedHuffman,
+  tree,
+}) => {
+  const onFileDecoding = (e) => {
     const file = e.target.files[0]; // 파일 객체를 가져옴
     let fileReader = new FileReader();
     fileReader.onload = () => {
       console.log(fileReader.result); // 파일 내용을 출력
-      setText(fileReader.result); // 파일 상태를 설정
-      compressFileContent(fileReader.result);
+      setHuffman(fileReader.result); // 파일 상태를 설정
+      setDecompressedHuffman(decompressText(fileReader.result, tree));
     };
     fileReader.readAsText(file); // 파일 객체를 전달
   };
-
-  const compressFileContent = (text) => {
-    const huffmanTree = buildHuffmanTree(text);
-    setTree(huffmanTree);
-    const huffmanCodes = generateHuffmanCodes(huffmanTree);
-    const compressed = compressText(text, huffmanCodes);
-    setCompressedText(compressed);
-    console.log(compressed);
-  };
-
   return (
     <>
       <div className="flex items-center justify-center w-full">
         <label
-          htmlFor="encodingUpload"
+          htmlFor="decodingUpload"
           className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer"
         >
           <svg
@@ -51,10 +42,10 @@ const UploadBtn = ({ className, setText, setCompressedText, setTree }) => {
           Upload
         </label>
         <input
-          id="encodingUpload"
+          id="decodingUpload"
           type="file"
           className="sr-only"
-          onChange={onFileEncoding}
+          onChange={onFileDecoding}
           accept=".txt"
         />
       </div>
@@ -62,4 +53,4 @@ const UploadBtn = ({ className, setText, setCompressedText, setTree }) => {
   );
 };
 
-export default UploadBtn;
+export default DecodedUploadBtn;
